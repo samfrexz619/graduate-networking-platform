@@ -6,9 +6,51 @@ on:
       - main
       - feature/project-setup
 
+  pull_request: 
+    branches: 
+      - main
+
 jobs:
-  hello-world:
+  backend:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: server
     steps:
-      - name: Print message
-        run: echo "GitHub Actions is working!"
+      - name: Check Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Backend
+        run: npm run build
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: client
+      
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Frontend
+        run: npm run build
+
