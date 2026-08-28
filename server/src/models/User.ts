@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Model } from "mongoose";
 
 export enum UserRole {
   STUDENT = "student",
@@ -53,4 +53,4 @@ const userSchema = new Schema<IUser>({
   }
 )
 
-export const User = mongoose.models.User || mongoose.model<IUser>("User", userSchema);
+export const User: Model<IUser> = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>("User", userSchema);
