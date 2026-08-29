@@ -7,7 +7,6 @@ import { User } from "../models/User.js";
 export const register = async (req: Request, res: Response): Promise<void> => {
   try {
     console.log(req.headers)
-    console.log(req.body)
     const {
       firstName,
       lastName,
@@ -64,3 +63,4 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
   }
 }
+
