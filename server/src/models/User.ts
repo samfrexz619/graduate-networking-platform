@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
+import bcrypt from "bcryptjs";
 
 export enum UserRole {
   STUDENT = "student",
@@ -14,6 +15,10 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   profileCompleted: boolean;
+
+  comparePassword(
+    candidatePassword: string
+  ): Promise<boolean>
 }
 
 const userSchema = new Schema<IUser>({
@@ -51,6 +56,22 @@ const userSchema = new Schema<IUser>({
   {
     timestamps: true
   }
-)
+);
+
+// Mongoose Pre-Save Hook: hash password before saving
+userSchema.pre("save", async function () {
+  if (!this.isModified("password")) {
+    return;
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+
+  // next();
+});
+
+userSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 export const User: Model<IUser> = (mongoose.models.User as Model<IUser>) || mongoose.model<IUser>("User", userSchema);

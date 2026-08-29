@@ -1,12 +1,12 @@
 import { type Request, type Response } from "express";
-import bcrypt from "bcryptjs";
 import { User } from "../models/User.js";
 
 
 
 export const register = async (req: Request, res: Response): Promise<void> => {
+
   try {
-    console.log(req.headers)
+    // console.log(req.headers)
     const {
       firstName,
       lastName,
@@ -33,14 +33,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     };
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
     const user = await User.create({
       firstName,
       lastName,
       email,
-      password: hashedPassword,
+      password,
       role
     });
 
@@ -62,5 +59,5 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       message: "Internal server error"
     });
   }
-}
+};
 
