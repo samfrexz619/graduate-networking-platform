@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 import { User } from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
+import type { AuthRequest } from "../types/auth.types.js";
 
 
 
@@ -124,5 +125,52 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       message: "Internal server error"
     });
   }
-}
+};
+
+export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const user = await User.findById(req.userId).select("-password");
+
+    if (!user) {
+      res.status(404).json({
+        success: false,
+        message: "User not found"
+      });
+      return;
+    };
+
+    res.status(200).json({
+      success: true,
+      data: user
+    })
+  } catch (error) {
+    console.error(error)
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+};
+
+export const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0)
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    })
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+};
 
