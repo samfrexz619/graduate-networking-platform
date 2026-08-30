@@ -98,10 +98,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = generateToken(user._id.toString(), user.role);
 
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
     res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
+      // token,
       data: {
         id: user._id,
         firstName: user.firstName,
