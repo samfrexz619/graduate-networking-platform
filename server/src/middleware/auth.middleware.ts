@@ -1,6 +1,7 @@
 import { type Response, type NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import type { AuthRequest } from "../types/auth.types.js";
+import { env } from "../config/env.js";
 
 
 
@@ -17,7 +18,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction): vo
       return;
     };
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as {
+    const decoded = jwt.verify(token, env.JWT_SECRET as string) as {
       id: string;
       role: string;
     };

@@ -15,7 +15,12 @@ export interface IUser extends Document {
   password: string;
   role: UserRole;
   profileCompleted: boolean;
+  isVerified: boolean;
+  verificationToken?: string | undefined;
+  verificationTokenExpires?: Date | undefined;
 
+  passwordResetToken?: string | undefined;
+  passwordResetExpires?: Date | undefined;
   comparePassword(
     candidatePassword: string
   ): Promise<boolean>
@@ -51,7 +56,23 @@ const userSchema = new Schema<IUser>({
   profileCompleted: {
     type: Boolean,
     default: false
-  }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationToken: {
+    type: String,
+  },
+  verificationTokenExpires: {
+    type: Date,
+  },
+  passwordResetToken: {
+    type: String,
+  },
+  passwordResetExpires: {
+    type: Date,
+  },
 },
   {
     timestamps: true
