@@ -23,6 +23,8 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction): vo
       role: string;
     };
 
+    // req.user = {}
+
     req.userId = decoded.id;
     req.role = decoded.role;
 
