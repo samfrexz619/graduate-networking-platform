@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, Model } from "mongoose";
 import type { IProfile } from "../types/profile.types.js";
 
 
@@ -84,4 +84,4 @@ profileSchema.index({ skills: 1 });
 profileSchema.index({ interests: 1 });
 
 
-export const Profile = mongoose.models.Profile || mongoose.model<IProfile>("Profile", profileSchema);
+export const Profile: Model<IProfile> = (mongoose.models.Profile as Model<IProfile>) || mongoose.model<IProfile>("Profile", profileSchema);

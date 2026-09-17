@@ -40,7 +40,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     // 
     const verificationToken = crypto.randomBytes(32).toString("hex");
-    const verificationTokenExpires = new Date(Date.now() + + 24 * 60 * 60 * 1000);
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
 
     // creating new user
     const user = await User.create({
