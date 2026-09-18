@@ -162,7 +162,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const user = await User.findOne({ email });
 
-    // ensure user is email is verified before login in
+    // ensure user's email is verified before login in
     if (!user?.isVerified) {
       res.status(403).json({
         success: false,

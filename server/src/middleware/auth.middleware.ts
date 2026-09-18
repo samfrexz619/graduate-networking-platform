@@ -25,7 +25,7 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction): vo
 
     // req.user = {}
 
-    req.userId = decoded.id;
+    req.userId = decoded.id; //jwt creates the userId
     req.role = decoded.role;
 
     next();

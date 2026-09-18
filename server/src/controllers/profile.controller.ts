@@ -92,3 +92,41 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
   }
 };
 
+export const getMyProfile = async (req: AuthRequest, res: Response) => {
+  try {
+    // userId is gotten from the authentication middleware not the client, that is why we use req.userId and not const { userId } = req.body;
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    }
+
+    const profile = await Profile.findOne({
+      userId: req.userId
+    });
+
+    if (!profile) {
+      res.status(404).json({
+        success: false,
+        message: "Profile not found"
+      });
+      return;
+    };
+
+    res.status(200).json({
+      success: true,
+      message: "",
+      data: profile
+    })
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}
