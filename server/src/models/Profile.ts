@@ -80,7 +80,7 @@ const profileSchema = new Schema<IProfile>({
   }
 );
 
-profileSchema.index({ skills: 1 });
+profileSchema.index({ skills: 1 }); // creates on the skills field so that queries are much faster
 profileSchema.index({ interests: 1 });
 
 
