@@ -19,6 +19,9 @@ const connectionSchema = new Schema<IConnection>(
       type: String,
       enum: ConnectionStatusValues,
       default: "pending"
+    },
+    acceptedAt: {
+      type: Date,
     }
   },
   {

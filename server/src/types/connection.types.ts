@@ -10,11 +10,6 @@ export const ConnectionStatusValues = [
 
 export type ConnectionStatus = typeof ConnectionStatusValues[number];
 
-// export type ConnectionStatus =
-//   | "pending"
-//   | "accepted"
-//   | "rejected"
-//   | "removed";
 
 export interface IConnection extends Document {
   senderId: Types.ObjectId;
@@ -22,4 +17,5 @@ export interface IConnection extends Document {
   status: ConnectionStatus;
   createdAt: Date;
   updatedAt: Date;
+  acceptedAt: Date
 }

@@ -172,6 +172,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     }
 
     if (!user) {
+
       res.status(401).json({
         success: false,
         message: "Invalid credentials"
@@ -182,12 +183,28 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
+      // console.log("User found:", !!user);
+
+      // console.log(
+      //   "Password match:",
+      //   await bcrypt.compare(password, user.password)
+      // );
       res.status(401).json({
         success: false,
         message: "Invalid credentials"
       });
       return;
     }
+
+    // console.log("Entered password:", password);
+    // console.log("Stored hash:", user.password);
+
+    // const directTest = await bcrypt.compare(
+    //   "Password123",
+    //   user.password
+    // );
+
+    // console.log("Direct test:", directTest);
 
     const token = generateToken(user._id.toString(), user.role);
 
