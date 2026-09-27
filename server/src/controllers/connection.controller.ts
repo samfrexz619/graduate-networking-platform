@@ -145,4 +145,122 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       message: "Internal server error"
     });
   }
-}
+};
+
+export const getPendingConnections = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    };
+
+    const incomingRequests = await Connection.find({
+      receiverId: req.userId,
+      status: "pending"
+    })
+      .populate(
+        "senderId",
+        "firstName lastName, email"
+      )
+      .sort({ createdAt: -1 });
+
+    const outgoingRequests = await Connection.find({
+      senderId: req.userId,
+      status: "pending"
+    })
+      .populate(
+        "receiverId",
+        "firstName lastName email"
+      )
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: false,
+      data: {
+        incoming: incomingRequests,
+        outgoing: outgoingRequests
+      }
+    })
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+};
+
+export const acceptConnectionRequest = async (req: AuthRequest, res: Response) => {
+  try {
+    // const { connectionId } = req.params;
+
+    const connectionId = Array.isArray(req.params.connectionId)
+      ? req.params.connectionId[0]
+      : req.params.connectionId;
+
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    };
+
+    // validate the connectionId with - !mongoose.Types.ObjectId.isValid(connectionId)
+    if (!connectionId || !mongoose.Types.ObjectId.isValid(connectionId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid connection id"
+      });
+      return;
+    };
+
+    const connection = await Connection.findById(connectionId);
+
+    if (!connection) {
+      res.status(404).json({
+        success: false,
+        message: "Connection not found!"
+      });
+      return;
+    };
+
+    if (connection.receiverId.toString() !== req.userId) {
+      res.status(403).json({
+        success: false,
+        message: "You are not allowed to accept this request"
+      });
+      return;
+    };
+
+    if (connection.status !== "pending") {
+      res.status(409).json({
+        success: false,
+        message: "Only pending requests can be accepted"
+      });
+      return;
+    };
+
+    connection.status = "accepted";
+    connection.acceptedAt = new Date();
+
+    await connection.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Connection accepted successfully"
+    })
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error!"
+    })
+  }
+};
