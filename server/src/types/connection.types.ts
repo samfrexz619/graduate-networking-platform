@@ -19,3 +19,9 @@ export interface IConnection extends Document {
   updatedAt: Date;
   acceptedAt: Date
 }
+
+export type PopulatedUser = {
+  _id: Types.ObjectId;
+  firstName: string;
+  lastName: string;
+};

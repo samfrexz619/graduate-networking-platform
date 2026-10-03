@@ -1,8 +1,10 @@
 import { type Response } from "express";
 import mongoose from "mongoose";
 import type { AuthRequest } from "../types/auth.types.js";
+import { Profile } from './../models/Profile.js';
 import { User } from "../models/User.js";
 import { Connection } from "../models/Connection.js";
+import type { PopulatedUser } from "../types/connection.types.js";
 
 
 
@@ -161,9 +163,9 @@ export const getPendingConnections = async (req: AuthRequest, res: Response) => 
       receiverId: req.userId,
       status: "pending"
     })
-      .populate(
+      .populate<{ senderId: PopulatedUser }>(
         "senderId",
-        "firstName lastName, email"
+        "firstName lastName"
       )
       .sort({ createdAt: -1 });
 
@@ -171,17 +173,71 @@ export const getPendingConnections = async (req: AuthRequest, res: Response) => 
       senderId: req.userId,
       status: "pending"
     })
-      .populate(
+      .populate<{ receiverId: PopulatedUser }>(
         "receiverId",
-        "firstName lastName email"
+        "firstName lastName"
       )
       .sort({ createdAt: -1 });
 
+    // Collect the IDs of all users involved in pending requests
+    const userIds = [
+      ...incomingRequests.map((connection) => connection.senderId._id),
+      ...outgoingRequests.map((connection) => connection.receiverId._id)
+    ];
+
+    // Fetch all profiles in one query
+    const profiles = await Profile.find({
+      userId: { $in: userIds }
+    }).select("userId headline profilePicture");
+
+
+    // Create a lookup map for fast profile access
+    const profileMap = new Map(
+      profiles.map((profile) => [
+        profile.userId.toString(),
+        profile]
+      ));
+
+    // Format incoming requests
+    const incoming = incomingRequests.map((connection) => {
+      const userId = connection.senderId._id.toString();
+      const profile = profileMap.get(userId);
+
+      return {
+        connectionId: connection._id,
+        user: {
+          _id: connection.senderId._id,
+          firstName: connection.senderId.firstName,
+          lastName: connection.senderId.lastName,
+          headline: profile?.headline ?? null,
+          profilePicture: profile?.profilePicture ?? null
+        },
+        createdAt: connection.createdAt
+      }
+    });
+
+    const outgoing = outgoingRequests.map((connection) => {
+      const userId = connection.receiverId._id.toString();
+      const profile = profileMap.get(userId);
+
+      return {
+        connectionId: connection._id,
+        user: {
+          _id: connection.receiverId._id,
+          firstName: connection.receiverId.firstName,
+          lastName: connection.receiverId.lastName,
+          headline: profile?.headline ?? null,
+          profilePicture: profile?.profilePicture ?? null
+        },
+        createdAt: connection.createdAt
+      }
+    })
+
     res.status(200).json({
-      success: false,
+      success: true,
       data: {
-        incoming: incomingRequests,
-        outgoing: outgoingRequests
+        incoming,
+        outgoing
       }
     })
   } catch (error) {
@@ -264,3 +320,222 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
     })
   }
 };
+
+export const rejectConnectionRequest = async (req: AuthRequest, res: Response) => {
+  try {
+
+    const connectionId = Array.isArray(req.params.connectionId)
+      ? req.params.connectionId[0]
+      : req.params.connectionId;
+
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    };
+
+    if (!connectionId || !mongoose.Types.ObjectId.isValid(connectionId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid connection id"
+      });
+      return;
+    };
+
+    const connection = await Connection.findById(connectionId);
+
+    if (!connection) {
+      res.status(404).json({
+        success: false,
+        message: "Connection not found"
+      });
+      return;
+    };
+
+    // Authorization check
+    if (connection?.receiverId.toString() !== req.userId) {
+      res.status(403).json({
+        success: false,
+        message: "You are not allowed to reject this request"
+      });
+      return;
+    }
+
+    if (connection.status !== "pending") {
+      res.status(409).json({
+        success: false,
+        message: "Only pending requests can be rejected"
+      });
+      return;
+    };
+
+    connection.status = "rejected";
+
+    await connection.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Connection rejected successfully"
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+export const cancelConnectionRequest = async (req: AuthRequest, res: Response) => {
+  try {
+    const connectionId = Array.isArray(req.params.connectionId)
+      ? req.params.connectionId[0]
+      : req.params.connectionId;
+
+    // Check if the user is authenticated
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    };
+
+    if (!connectionId || !mongoose.Types.ObjectId.isValid(connectionId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid connection id"
+      });
+      return;
+    };
+
+    // Find the connection
+    const connection = await Connection.findById(connectionId);
+
+    if (!connection) {
+      res.status(404).json({
+        success: false,
+        message: "Connection not found"
+      });
+      return;
+    };
+
+    // Only the sender can cancel their own request
+    if (connection.senderId.toString() !== req.userId) {
+      res.status(403).json({
+        success: false,
+        message: "You are not allowed to cancel this request"
+      });
+      return;
+    };
+
+    // Only pending requests can be cancelled
+    if (connection.status !== "pending") {
+      res.status(409).json({
+        success: false,
+        message: "Only pending requests can be cancelled"
+      });
+      return;
+    };
+
+    // Preserve the connection record but mark it as removed
+    connection.status = "removed";
+
+    await connection.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Connection request cancelled successfully"
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Internal server error"
+    })
+  }
+};
+
+export const getConnections = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    };
+
+    const connections = await Connection.find({
+      $or: [
+        {
+          senderId: req.userId,
+          status: "accepted"
+        },
+        {
+          receiverId: req.userId,
+          status: "accepted"
+        }
+      ]
+    }).populate<{ senderId: PopulatedUser }>("senderId", "firstName lastName")
+      .populate<{ receiverId: PopulatedUser }>("receiverId", "firstName lastName")
+      .sort({ acceptedAt: -1 });
+
+    const connectedUsers = connections.map((connection) =>
+      connection.senderId._id.toString() === req.userId
+        ? connection.receiverId
+        : connection.senderId
+    );
+
+    const userIds = connectedUsers.map(user => user._id);
+
+    // Fetch all profiles in one query
+    const profiles = await Profile.find({
+      userId: { $in: userIds }
+    }).select("userId headline profilePicture");
+
+    // Create a lookup map for fast profile access
+    const profileMap = new Map(
+      profiles.map((profile) => [
+        profile.userId.toString(),
+        profile]
+      ));
+
+    const formattedConnections = connections.map((connection) => {
+      const connectedUser = connection.senderId.toString() === req.userId
+        ? connection.receiverId
+        : connection.senderId;
+
+      const userId = connectedUser._id.toString();
+      const profile = profileMap.get(userId);
+
+      return {
+        connectionId: connection._id,
+        user: {
+          _id: connectedUser._id,
+          firstName: connectedUser.firstName,
+          lastName: connectedUser.lastName,
+          headline: profile?.headline ?? null,
+          profilePicture: profile?.profilePicture ?? null,
+        },
+        connectedAt: connection.acceptedAt
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      data: formattedConnections
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    })
+  }
+}

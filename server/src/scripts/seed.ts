@@ -28,6 +28,14 @@ const seedUsers = async () => {
         isVerified: true,
         role: UserRole.STUDENT
       },
+      {
+        firstName: "whyte",
+        lastName: "bobby",
+        email: "whyte@test.com",
+        password,
+        isVerified: true,
+        role: UserRole.STUDENT
+      },
     ]);
     console.log("Seeded users");
   } catch (error) {
