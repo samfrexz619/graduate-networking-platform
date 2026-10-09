@@ -6,10 +6,12 @@ import { acceptConnectionRequest, cancelConnectionRequest, getConnections, getPe
 
 const router = Router();
 
-router.post("/:userId", protect, sendConnectionRequest);
+router.get("/", protect, getConnections);
 router.get("/pending", protect, getPendingConnections);
+
+router.post("/:userId", protect, sendConnectionRequest);
+
 router.patch("/:connectionId/accept", protect, acceptConnectionRequest);
 router.patch("/:connectionId/reject", protect, rejectConnectionRequest);
 router.patch("/:connectionId/cancel", protect, cancelConnectionRequest);
-router.get("/", protect, getConnections);
 export default router;
