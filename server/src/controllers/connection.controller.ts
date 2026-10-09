@@ -5,10 +5,12 @@ import { Profile } from './../models/Profile.js';
 import { User } from "../models/User.js";
 import { Connection } from "../models/Connection.js";
 import type { PopulatedUser } from "../types/connection.types.js";
+import { Notification } from "../models/Notification.js";
 
 
 
 export const sendConnectionRequest = async (req: AuthRequest, res: Response) => {
+
   try {
     if (!req.userId) {
       res.status(401).json({
@@ -16,7 +18,7 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
         message: "Unauthorised",
       });
       return;
-    }
+    };
 
     // const { userId: targetUserId } = req.params;
 
@@ -73,7 +75,7 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
         message: "You are already connected"
       });
       return;
-    }
+    };
 
     if (existingConnection?.status === 'pending' &&
       existingConnection?.senderId.toString() === req.userId) {
@@ -82,7 +84,8 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
         message: "Connection request already sent"
       });
       return;
-    }
+    };
+
     // if user send request and the other user sent request to this same user, then auto-accept
     if (existingConnection?.status === "pending" &&
       existingConnection?.senderId.toString() === targetUserId) {
@@ -90,12 +93,21 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       existingConnection.status = 'accepted';
 
       await existingConnection.save();
+
+      await Notification.create({
+        recipientId: existingConnection.senderId,
+        actorId: req.userId,
+        type: "connection_accepted",
+        connectionId: existingConnection._id,
+        read: false
+      });
+
       res.status(200).json({
         success: true,
         message: "Connection accepted"
       });
       return;
-    }
+    };
 
     if (existingConnection?.status === 'rejected') {
       existingConnection.senderId = new mongoose.Types.ObjectId(req.userId);
@@ -111,7 +123,7 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
         message: "Connection request sent"
       });
       return;
-    }
+    };
 
     if (existingConnection?.status === 'removed') {
       existingConnection.senderId = new mongoose.Types.ObjectId(req.userId);
@@ -120,6 +132,15 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       existingConnection.status = 'pending';
 
       await existingConnection.save();
+
+      // Create notification for the receiver
+      await Notification.create({
+        recipientId: targetUserId,
+        actorId: req.userId,
+        type: "connection_request",
+        connectionId: existingConnection._id,
+        read: false
+      });
 
       res.status(200).json({
         success: true,
@@ -134,11 +155,20 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       status: 'pending'
     });
 
+    // Create notification for the receiver
+    await Notification.create({
+      recipientId: targetUserId,
+      actorId: req.userId,
+      type: "connection_request",
+      connectionId: connection._id,
+      read: false
+    });
+
     res.status(201).json({
       success: true,
       message: "Connection request sent",
       data: connection
-    })
+    });
   } catch (error) {
     console.error(error);
 
@@ -146,7 +176,7 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       success: false,
       message: "Internal server error"
     });
-  }
+  };
 };
 
 export const getPendingConnections = async (req: AuthRequest, res: Response) => {
@@ -305,6 +335,14 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
     connection.acceptedAt = new Date();
 
     await connection.save();
+
+    await Notification.create({
+      recipientId: connection.senderId,
+      actorId: req.userId,
+      type: "connection_accepted",
+      connectionId: connection._id,
+      read: false
+    });
 
     res.status(200).json({
       success: true,
@@ -538,4 +576,4 @@ export const getConnections = async (req: AuthRequest, res: Response) => {
       message: "Internal server error"
     })
   }
-}
+};
