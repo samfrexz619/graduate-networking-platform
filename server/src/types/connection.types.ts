@@ -17,7 +17,7 @@ export interface IConnection extends Document {
   status: ConnectionStatus;
   createdAt: Date;
   updatedAt: Date;
-  acceptedAt: Date
+  acceptedAt: Date | undefined;
 }
 
 export type PopulatedUser = {

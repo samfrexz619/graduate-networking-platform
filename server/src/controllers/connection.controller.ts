@@ -114,9 +114,18 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       existingConnection.receiverId = new mongoose.Types.ObjectId(targetUserId);
       existingConnection.status = 'pending';
 
-      // existingConnection.acceptedAt = undefined;
+      existingConnection.acceptedAt = undefined;
 
       await existingConnection.save();
+
+      // Create notification for the receiver
+      await Notification.create({
+        recipientId: targetUserId,
+        actorId: req.userId,
+        type: "connection_request",
+        connectionId: existingConnection._id,
+        read: false
+      });
 
       res.status(200).json({
         success: true,
@@ -130,6 +139,7 @@ export const sendConnectionRequest = async (req: AuthRequest, res: Response) => 
       existingConnection.receiverId = new mongoose.Types.ObjectId(targetUserId);
 
       existingConnection.status = 'pending';
+      existingConnection.acceptedAt = undefined;
 
       await existingConnection.save();
 
@@ -294,7 +304,7 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
         message: "Unauthorized"
       });
       return;
-    };
+    }
 
     // validate the connectionId with - !mongoose.Types.ObjectId.isValid(connectionId)
     if (!connectionId || !mongoose.Types.ObjectId.isValid(connectionId)) {
@@ -303,7 +313,7 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
         message: "Invalid connection id"
       });
       return;
-    };
+    }
 
     const connection = await Connection.findById(connectionId);
 
@@ -313,7 +323,7 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
         message: "Connection not found!"
       });
       return;
-    };
+    }
 
     if (connection.receiverId.toString() !== req.userId) {
       res.status(403).json({
@@ -321,7 +331,7 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
         message: "You are not allowed to accept this request"
       });
       return;
-    };
+    }
 
     if (connection.status !== "pending") {
       res.status(409).json({
@@ -329,7 +339,7 @@ export const acceptConnectionRequest = async (req: AuthRequest, res: Response) =
         message: "Only pending requests can be accepted"
       });
       return;
-    };
+    }
 
     connection.status = "accepted";
     connection.acceptedAt = new Date();
@@ -413,6 +423,12 @@ export const rejectConnectionRequest = async (req: AuthRequest, res: Response) =
 
     await connection.save();
 
+    await Notification.deleteOne({
+      connectionId: connection._id,
+      recipientId: req.userId,
+      type: "connection_request"
+    });
+
     res.status(200).json({
       success: true,
       message: "Connection rejected successfully"
@@ -485,13 +501,21 @@ export const cancelConnectionRequest = async (req: AuthRequest, res: Response) =
 
     await connection.save();
 
+    await Notification.deleteOne({
+      connectionId: connection._id,
+      recipientId: connection.receiverId,
+      type: "connection_request"
+    })
+
     res.status(200).json({
       success: true,
       message: "Connection request cancelled successfully"
     });
   } catch (error) {
     console.error(error);
+
     res.status(500).json({
+      success: false,
       message: "Internal server error"
     })
   }

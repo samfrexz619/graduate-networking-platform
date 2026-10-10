@@ -189,3 +189,35 @@ export const markAllNotificationsAsRead = async (req: AuthRequest, res: Response
     });
   }
 };
+
+export const getUnreadNotificationCount = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    }
+
+    const unreadCount = await Notification.countDocuments({
+      recipientId: req.userId,
+      read: false
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        unreadCount
+      }
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}
