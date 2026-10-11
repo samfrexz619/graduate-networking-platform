@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.routes.js";
 import profileRoutes from "./routes/profile.routes.js";
 import connectionRoutes from "./routes/connection.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
+import conversationRoutes from "./routes/conversation.routes.js";
 
 
 
@@ -16,6 +17,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/profile", profileRoutes);
 app.use("/api/v1/connections", connectionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/conversations", conversationRoutes);
 app.get("/api/v1/health", (_req, res) => {
 
   res.status(200).json({

@@ -601,3 +601,11 @@ export const getConnections = async (req: AuthRequest, res: Response) => {
     })
   }
 };
+
+/*
+POST   /conversations
+GET    /conversations
+GET    /conversations/:conversationId/messages
+POST   /conversations/:conversationId/messages
+PATCH  /messages/:messageId/read
+*/
