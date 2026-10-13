@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import type { Response } from "express";
 import type { AuthRequest } from "../types/auth.types.js";
-import { Conversation } from "../models/conversation.js";
+import { Conversation } from "../models/Conversation.js";
 import { User } from "../models/User.js";
 import { Connection } from "../models/Connection.js";
 import type { PopulatedUser } from "../types/connection.types.js";
