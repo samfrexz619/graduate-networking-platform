@@ -9,6 +9,7 @@ import { Notification } from "../models/Notification.js";
 
 
 
+
 export const sendConnectionRequest = async (req: AuthRequest, res: Response) => {
 
   try {
@@ -542,17 +543,28 @@ export const getConnections = async (req: AuthRequest, res: Response) => {
           status: "accepted"
         }
       ]
-    }).populate<{ senderId: PopulatedUser }>("senderId", "firstName lastName")
-      .populate<{ receiverId: PopulatedUser }>("receiverId", "firstName lastName")
+    }).populate<{ senderId: PopulatedUser | null }>("senderId", "firstName lastName")
+      .populate<{ receiverId: PopulatedUser | null }>("receiverId", "firstName lastName")
       .sort({ acceptedAt: -1 });
 
-    const connectedUsers = connections.map((connection) =>
+    type PopulatedConnection = (typeof connections)[number] & {
+      senderId: PopulatedUser;
+      receiverId: PopulatedUser;
+    };
+
+    const validConnections = connections.filter(
+      (connection): connection is PopulatedConnection =>
+        connection.senderId !== null &&
+        connection.receiverId !== null
+    );
+
+    const connectedUsers = validConnections.map((connection) =>
       connection.senderId._id.toString() === req.userId
         ? connection.receiverId
         : connection.senderId
     );
 
-    const userIds = connectedUsers.map(user => user._id);
+    const userIds = connectedUsers.map(user => user._id.toString());
 
     // Fetch all profiles in one query
     const profiles = await Profile.find({
@@ -566,10 +578,11 @@ export const getConnections = async (req: AuthRequest, res: Response) => {
         profile]
       ));
 
-    const formattedConnections = connections.map((connection) => {
-      const connectedUser = connection.senderId.toString() === req.userId
-        ? connection.receiverId
-        : connection.senderId;
+    const formattedConnections = validConnections.map((connection) => {
+      const connectedUser =
+        connection.senderId._id.toString() === req.userId
+          ? connection.receiverId
+          : connection.senderId;
 
       const userId = connectedUser._id.toString();
       const profile = profileMap.get(userId);
