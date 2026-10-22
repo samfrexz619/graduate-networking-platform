@@ -86,9 +86,22 @@ export const sendMessage = async (req: AuthRequest, res: Response) => {
 
     await conversation.save();
 
+    const messageData = {
+      _id: message._id,
+      conversationId: message.conversationId,
+      senderId: message.senderId,
+      content: message.content,
+      readAt: message.readAt ?? null,
+      createdAt: message.createdAt,
+    };
+
+    const io = req.app.locals.io;
+
+    io.to(conversationId).emit("new_message", messageData);
+
     res.status(201).json({
       success: true,
-      data: message,
+      data: messageData,
       message: "Message sent successfully"
     })
   } catch (error) {
@@ -239,6 +252,84 @@ export const getMessages = async (req: AuthRequest, res: Response) => {
       }
     });
 
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
+
+export const readMessages = async (req: AuthRequest, res: Response) => {
+  try {
+    if (!req.userId) {
+      res.status(401).json({
+        success: false,
+        message: "Unauthorized"
+      });
+      return;
+    }
+
+    const conversationId = Array.isArray(req.params.conversationId)
+      ? req.params.conversationId[0]
+      : req.params.conversationId;
+
+    if (!conversationId || !mongoose.Types.ObjectId.isValid(conversationId)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid conversation ID"
+      });
+      return;
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      res.status(404).json({
+        success: false,
+        message: "Conversation not found"
+      });
+      return;
+    }
+
+    const isParticipant = conversation.participants.some(
+      participant => participant.toString() === req.userId
+    );
+
+    if (!isParticipant) {
+      res.status(403).json({
+        success: false,
+        message: "You are not a participant in this conversation"
+      });
+      return;
+    }
+
+    const result = await Message.updateMany(
+      {
+        conversationId: conversation._id,
+        senderId: { $ne: req.userId },
+        readAt: { $exists: false }
+      },
+      {
+        $set: {
+          readAt: new Date()
+        }
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "messages marked as read",
+      updatedCount: result.modifiedCount
+    })
+
+    // const unreadMessages = await Message.find({
+    //   conversationId: conversation._id,
+    //   senderId: { $ne: req.userId },
+    //   readAt: { $exists: false }
+    // })
   } catch (error) {
     console.error(error);
 
