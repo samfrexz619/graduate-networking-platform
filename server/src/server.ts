@@ -93,7 +93,7 @@ io.on("connection", (socket) => {
       }
 
       await authenticatedSocket.join(conversationId);
-      await authenticatedSocket.emit("conversation_joined", {
+      authenticatedSocket.emit("conversation_joined", {
         conversationId
       });
 

@@ -3,6 +3,7 @@ import type { Response } from "express";
 import type { AuthRequest } from "../types/auth.types.js";
 import { Message } from "../models/Message.js";
 import { Conversation } from "../models/Conversation.js";
+import app from "../app.js";
 
 
 
@@ -306,6 +307,8 @@ export const readMessages = async (req: AuthRequest, res: Response) => {
       return;
     }
 
+    const readAt = new Date();
+
     const result = await Message.updateMany(
       {
         conversationId: conversation._id,
@@ -314,10 +317,20 @@ export const readMessages = async (req: AuthRequest, res: Response) => {
       },
       {
         $set: {
-          readAt: new Date()
+          readAt
         }
       }
     );
+
+    const io = app.locals.io;
+
+    if (result.modifiedCount > 0) {
+      io.to(conversationId).emit("message_read", {
+        conversationId,
+        userId: req.userId,
+        readAt
+      });
+    }
 
     res.status(200).json({
       success: true,
@@ -325,11 +338,7 @@ export const readMessages = async (req: AuthRequest, res: Response) => {
       updatedCount: result.modifiedCount
     })
 
-    // const unreadMessages = await Message.find({
-    //   conversationId: conversation._id,
-    //   senderId: { $ne: req.userId },
-    //   readAt: { $exists: false }
-    // })
+
   } catch (error) {
     console.error(error);
 
