@@ -1,4 +1,5 @@
 import React from 'react';
+import DashboardShell from '@/components/layout/DashboardShell';
 
 
 
@@ -8,8 +9,9 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
-      <main>{children}</main>
-    </div>
+    <DashboardShell>
+      {children}
+    </DashboardShell>
+
   );
 }

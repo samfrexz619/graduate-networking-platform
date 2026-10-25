@@ -7,6 +7,7 @@ export default function AuthLayout({
 }) {
   return (
     <main className="min-h-screen bg-background">
+      <p>welcome to authlayout</p>
       {children}
     </main>
   );

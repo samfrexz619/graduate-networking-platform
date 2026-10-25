@@ -1,13 +1,19 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
 
-  --primary: #4f46e5;
+  --primary: #4F46E5;
   --primary-hover: #4338ca;
-
+  --main: #EEF2FF;
+  --sec-bg: #f8fafc;
   --surface: #ffffff;
+
   --secondary-text: #64748b;
   --border: #e2e8f0;
 
@@ -22,6 +28,8 @@
 
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
+  --color-main: var(--main);
+  --color-sec-bg: var(--sec-bg);
 
   --color-surface: var(--surface);
   --color-secondary-text: var(--secondary-text);
@@ -32,8 +40,8 @@
   --color-error: var(--error);
 
   --font-sans: var(--font-inter);
+  --font-jetBrainsMono: var(--font-jetBrainsMono);
 }
-
 
 body {
   background: var(--background);
