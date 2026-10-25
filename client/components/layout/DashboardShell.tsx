@@ -11,7 +11,6 @@ interface DashboardShellProps {
 export default function DashboardShell({ children }: DashboardShellProps) {
   return (
     <div className='bg-background min-h-screen'>
-      {/* <p>welcome to dashboard</p> */}
       <div className='flex min-h-screen'>
         <aside className='hidden w-64 border-r border-border bg-white lg:block'>
           {/* sidebar */}

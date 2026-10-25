@@ -13,8 +13,7 @@ interface Props {
 
 const Sidebar: React.FC<Props> = (props) => {
 
-  const pathname = usePathname()
-  console.log(pathname)
+  const pathname = usePathname();
 
   const navLinks = [
     {
@@ -23,7 +22,7 @@ const Sidebar: React.FC<Props> = (props) => {
       icon: <LayoutDashboardIcon size={18} />
     },
     {
-      routeName: "Profile",
+      routeName: "My Profile",
       routePath: "/profile",
       icon: <User size={18} />
     },
@@ -45,8 +44,8 @@ const Sidebar: React.FC<Props> = (props) => {
   ];
 
   return (
-    <aside className='flex h-full flex-col p-8'>
-      <div className=''>
+    <aside className='flex h-full flex-col px-8'>
+      <div className='pt-6'>
         <Link href="/dashboard" className='flex items-center gap-2'>
           <Image src="/images/logo.svg" height={100} width={100} alt='company logo' className='w-10 h-10' />
           <h6 className='font-bold font-jetBrainsMono'>CareerConnect</h6>
