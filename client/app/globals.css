@@ -41,6 +41,8 @@
 
   --font-sans: var(--font-inter);
   --font-jetBrainsMono: var(--font-jetBrainsMono);
+
+  --text-14: 14px;
 }
 
 body {

@@ -28,7 +28,7 @@ const AuthBanner: React.FC<Props> = (props) => {
           <Image src="/images/authLayoutBgg.avif" alt="" height={100} width={100} className="w-137 h-full rounded-2xl bg-contain" />
 
           <div className="flex gap-3 items-center">
-            <Image src="/images/authLayout2.png" alt="" height={50} width={100} />
+            <Image src="/images/authLayout2.png" alt="" height={50} width={100} className='w-auto h-auto' />
             <p className="text-[13px]">Built for the first steps of your career.</p>
           </div>
         </div>

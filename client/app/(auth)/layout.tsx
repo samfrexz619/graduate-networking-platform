@@ -13,7 +13,6 @@ export default function AuthLayout({
       </section>
       <section className="flex-1 bg-white p-16">
         {children}
-
       </section>
     </main>
   );

@@ -1,9 +1,8 @@
 import React from 'react'
+import LoginForm from '@/features/auth/components/LoginForm'
 
 const LoginPage = () => {
-  return (
-    <div>LoginPage</div>
-  )
+  return <LoginForm />
 }
 
 export default LoginPage
