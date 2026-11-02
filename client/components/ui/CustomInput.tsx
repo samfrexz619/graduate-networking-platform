@@ -1,8 +1,8 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { EyeIcon, EyeOff } from 'lucide-react';
 import { cn } from 'cn';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '../ui/input-group';
+import { InputGroup, InputGroupAddon, InputGroupInput } from './input-group';
 
 
 
@@ -33,7 +33,12 @@ const CustomInput: React.FC<CustomInputProps> = ({
 
   return (
     <>
-      <InputGroup className={cn('border w-full h-11.5 rounded-lg px-2', isFocused ? 'border-primary' : error ? 'border-error' : 'border-border')}>
+      <InputGroup className={cn('border w-full h-11.5 rounded-lg px-2',
+        error
+          ? 'border-error'
+          : isFocused
+            ? 'border-primary'
+            : 'border-border')}>
         <InputGroupInput
           {...props}
           ref={ref}

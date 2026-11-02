@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useRef } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
-import CustomInput from '@/components/common/CustomInput';
+import CustomInput from '@/components/ui/CustomInput';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { LoginFormData, loginSchema } from '../schemas/auth.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import Logo from '@/components/common/Logo';
 
 
 
@@ -21,13 +23,15 @@ const LoginForm: React.FC<Props> = (props) => {
 
   const {
     register,
+    control,
     handleSubmit,
     formState: { errors }
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: ""
+      password: "",
+      rememberMe: false
     }
   });
 
@@ -37,16 +41,20 @@ const LoginForm: React.FC<Props> = (props) => {
 
   return (
     <section className='w-max-160 mx-auto'>
-      <div className='w-full flex justify-between items-center'>
+      <div className='w-full hidden lg:flex justify-between items-center'>
         <p>New to CareerConnect?</p>
         <Link href="/register" className='font-semibold text-primary text-14'>Create an account →</Link>
       </div>
-      <div></div>
-      <div>
-        <form onSubmit={handleSubmit(onSubmit)}>
+      <div className='block lg:hidden'>
+        <Logo link='login' />
+      </div>
+      <div className='pt-20 w-full md:w-110 mx-auto'>
+        <h2 className='text-4xl font-bold'>Welcome back</h2>
+
+        <form onSubmit={handleSubmit(onSubmit)} className='mt-4'>
           <FieldGroup>
             <FieldSet>
-              <FieldDescription>
+              <FieldDescription className=''>
                 Your next opportunity could start with a hello.
               </FieldDescription>
               <FieldGroup className=''>
@@ -60,9 +68,10 @@ const LoginForm: React.FC<Props> = (props) => {
                     autoComplete='email'
                     placeholder="example@dev.com"
                     type='email'
+                    error={!!errors.email}
                   />
                   {errors.email && (
-                    <FieldError>
+                    <FieldError className='text-error text-14'>
                       {errors.email.message}
                     </FieldError>
                   )}
@@ -77,27 +86,48 @@ const LoginForm: React.FC<Props> = (props) => {
                     placeholder="••••••••••••"
                     autoComplete='current-password'
                     type='password'
+                    error={!!errors.password}
                   />
                   {errors.password && (
                     <FieldError>
-                      {errors.password.message}
+                      <small className='text-error text-14'>{errors.password.message}</small>
                     </FieldError>
                   )}
                 </Field>
 
                 <div className='flex justify-between item-center'>
-                  <Field orientation="horizontal" className='w-auto'>
-                    <Checkbox defaultChecked className="text-white" />
-                    <FieldLabel>Remember me</FieldLabel>
-                  </Field>
+                  <Controller
+                    name='rememberMe'
+                    control={control}
+                    render={({ field }) => (
+                      <div className='flex items-center gap-2'>
+                        <Checkbox
+                          id='rememberMe'
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                          className="text-white border-border" />
+                        <FieldLabel htmlFor='rememberMe' className='cursor-pointer'>Remember me</FieldLabel>
+                      </div>
+                    )}
+                  />
+
                   <Link href="#" className='block text-primary text-14 font-bold'>Forgot password?</Link>
                 </div>
+                <Field orientation={'horizontal'}>
+                  <Button type='submit' className="text-white h-11 border-none cursor-pointer rounded-lg flex w-full">
+                    Log in
+                  </Button>
+                </Field>
               </FieldGroup>
             </FieldSet>
           </FieldGroup>
         </form>
+        <div className='mt-8 space-y-6'>
+          <i className='w-full block bg-border h-px'></i>
+          <p className='text-center text-13 text-[#64748B]'>A new connection. A little guidance. A clearer next step.</p>
+          <p className='text-center text-13'>Don’t have an account? <Link href="#" className='font-semibold text-primary'>Create an account</Link></p>
+        </div>
       </div>
-
     </section>
   );
 }

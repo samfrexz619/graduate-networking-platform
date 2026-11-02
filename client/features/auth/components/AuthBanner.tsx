@@ -1,3 +1,4 @@
+import Logo from '@/components/common/Logo';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -10,10 +11,7 @@ const AuthBanner: React.FC<Props> = (props) => {
   return (
     <>
       <div>
-        <Link href={"/login"} className="flex items-center gap-2">
-          <Image src="/images/logo.svg" height={45} width={45} alt="company logo" className="size-11.25" />
-          <h6 className="font-bold">CareerConnect</h6>
-        </Link>
+        <Logo link='login' />
       </div>
 
       <section className="pt-20">
@@ -29,7 +27,7 @@ const AuthBanner: React.FC<Props> = (props) => {
 
           <div className="flex gap-3 items-center">
             <Image src="/images/authLayout2.png" alt="" height={50} width={100} className='w-auto h-auto' />
-            <p className="text-[13px]">Built for the first steps of your career.</p>
+            <p className="text-13">Built for the first steps of your career.</p>
           </div>
         </div>
       </section>
