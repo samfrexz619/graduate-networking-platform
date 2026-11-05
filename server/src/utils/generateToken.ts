@@ -2,10 +2,11 @@ import jwt, { type SignOptions } from "jsonwebtoken";
 import { env } from "../config/env.js";
 
 
-export const generateToken = (userId: string, role: string): string => {
-
-  const expiresIn = (env.JWT_EXPIRES_IN || "7d") as NonNullable<SignOptions["expiresIn"]>;
-
+export const generateToken = (
+  userId: string,
+  role: string,
+  expiresIn: NonNullable<SignOptions["expiresIn"]>
+): string => {
   return jwt.sign(
     {
       id: userId,

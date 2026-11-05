@@ -5,6 +5,7 @@ import { generateToken } from "../utils/generateToken.js";
 import type { AuthRequest } from "../types/auth.types.js";
 import { sendEmail } from "../services/email.service.js";
 import { env } from "../config/env.js";
+import type { SignOptions } from "jsonwebtoken";
 
 
 
@@ -149,7 +150,7 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
 export const login = async (req: Request, res: Response): Promise<void> => {
 
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe = false } = req.body;
 
     if (!email || !password) {
       res.status(400).json({
@@ -160,16 +161,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await User.findOne({ email });
-
-    // ensure user's email is verified before login in
-    if (!user?.isVerified) {
-      res.status(403).json({
+    if (typeof rememberMe !== "boolean") {
+      res.status(400).json({
         success: false,
-        message: "Please verify your email address"
+        message: "rememberMe must be a boolean value"
       });
       return;
     }
+
+    const user = await User.findOne({ email });
 
     if (!user) {
 
@@ -180,15 +180,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
+    // ensure user's email is verified before login in
+    if (!user?.isVerified) {
+      res.status(403).json({
+        success: false,
+        message: "Please verify your email address"
+      });
+      return;
+    }
+
     const isPasswordValid = await user.comparePassword(password);
 
     if (!isPasswordValid) {
-      // console.log("User found:", !!user);
-
-      // console.log(
-      //   "Password match:",
-      //   await bcrypt.compare(password, user.password)
-      // );
       res.status(401).json({
         success: false,
         message: "Invalid credentials"
@@ -206,13 +209,23 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     // console.log("Direct test:", directTest);
 
-    const token = generateToken(user._id.toString(), user.role);
+    const expiresIn: NonNullable<SignOptions["expiresIn"]> = rememberMe
+      ? "7d" : "1h";
+
+    const token = generateToken(
+      user._id.toString(),
+      user.role,
+      expiresIn
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000
+      path: "/",
+      ...(rememberMe && {
+        maxAge: 7 * 24 * 60 * 60 * 1000
+      }),
     })
 
     res.status(200).json({
@@ -393,15 +406,18 @@ export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<v
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
-    res.cookie("token", "", {
+    res.clearCookie("token", {
       httpOnly: true,
-      expires: new Date(0)
-    });
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/"
+    })
 
     res.status(200).json({
       success: true,
       message: "Logged out successfully"
-    })
+    });
+
   } catch (error) {
     console.error(error);
 
