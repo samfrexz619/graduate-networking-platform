@@ -87,9 +87,11 @@ const LoginForm: React.FC<Props> = (props) => {
                     placeholder="example@dev.com"
                     type='email'
                     error={!!errors.email}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
                   {errors.email && (
-                    <FieldError className='text-error text-14'>
+                    <FieldError id='email-error' className='text-error text-14'>
                       {errors.email.message}
                     </FieldError>
                   )}
@@ -105,9 +107,11 @@ const LoginForm: React.FC<Props> = (props) => {
                     autoComplete='current-password'
                     type='password'
                     error={!!errors.password}
+                    aria-invalid={!!errors.password}
+                    aria-describedby={errors.password ? "password-error" : undefined}
                   />
                   {errors.password && (
-                    <FieldError>
+                    <FieldError id='password-error'>
                       <small className='text-error text-14'>{errors.password.message}</small>
                     </FieldError>
                   )}

@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from "cn";
 import * as RadioGroupPrimitive from "@radix-ui/react-radio-group";
-import { Check, GraduationCap } from "lucide-react";
+import { Check } from "lucide-react";
 
 
 
@@ -15,10 +15,11 @@ interface ChoiceOption {
 
 
 interface ChoiceCardProps {
-  radioOptions?: ChoiceOption[];
+  radioOptions: ChoiceOption[];
   value: string;
   onValueChange?: (value: string) => void;
   disabled?: boolean;
+  error: boolean;
 }
 
 const ChoiceCard: React.FC<ChoiceCardProps> = (props) => {
@@ -26,11 +27,12 @@ const ChoiceCard: React.FC<ChoiceCardProps> = (props) => {
     radioOptions,
     value,
     onValueChange,
+    error,
     disabled, } = props;
 
   return (
-    <RadioGroupPrimitive.Root aria-labelledby="role-label" value={value} onValueChange={onValueChange} disabled={disabled} className="grid grid-cols-2 gap-3">
-      {radioOptions?.map(option => (
+    <RadioGroupPrimitive.Root aria-labelledby="role-label" aria-invalid={error} value={value} onValueChange={onValueChange} disabled={disabled} className="grid md:grid-cols-2 gap-3">
+      {radioOptions.map(option => (
         <label
           key={option.value}
           className={cn(

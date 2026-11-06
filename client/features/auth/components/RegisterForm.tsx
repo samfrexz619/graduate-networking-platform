@@ -14,6 +14,33 @@ import { BookOpen, BriefcaseBusiness, GraduationCap, Loader, Users } from 'lucid
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 
+// so that it doesn't render everytime the comp renders since it is a static data
+const roleOptions = [
+  {
+    label: "Student",
+    value: "student",
+    description: "Exploring career opportunities",
+    icon: <GraduationCap />
+  },
+  {
+    label: "Graduate",
+    value: "graduate",
+    description: "Starting my professional journey",
+    icon: <BookOpen />
+  },
+  {
+    label: "Mentor",
+    value: "mentor",
+    description: "Helping others grow",
+    icon: <Users />
+  },
+  {
+    label: "Recruiter",
+    value: "recruiter",
+    description: "Finding talented people",
+    icon: <BriefcaseBusiness />
+  },
+];
 
 
 const RegisterForm: React.FC = () => {
@@ -49,32 +76,6 @@ const RegisterForm: React.FC = () => {
     }
   }
 
-  const roleOptions = [
-    {
-      label: "Student",
-      value: "student",
-      description: "Exploring career opportunities",
-      icon: <GraduationCap />
-    },
-    {
-      label: "Graduate",
-      value: "graduate",
-      description: "Starting my professional journey",
-      icon: <BookOpen />
-    },
-    {
-      label: "Mentor",
-      value: "mentor",
-      description: "Helping others grow",
-      icon: <Users />
-    },
-    {
-      label: "Recruiter",
-      value: "recruiter",
-      description: "Finding talented people",
-      icon: <BriefcaseBusiness />
-    },
-  ];
   return (
     <section className='mx-auto w-full max-w-160'>
       <div className='w-full hidden lg:flex justify-between items-center'>
@@ -86,8 +87,7 @@ const RegisterForm: React.FC = () => {
       </div>
 
       <div className='pt-20 w-full md:w-110 mx-auto'>
-        <h2 className='text-4xl font-bold'>Start your next chapter</h2>
-        {/* <p className="text-14 mt-2"></p> */}
+        <h2 className='text-2xl lg:text-4xl font-bold'>Start your next chapter</h2>
 
         <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-4'>
           <FieldGroup>
@@ -109,9 +109,11 @@ const RegisterForm: React.FC = () => {
                       placeholder="Jane"
                       type='text'
                       error={!!errors.firstName}
+                      aria-invalid={!!errors.firstName}
+                      aria-describedby={errors.firstName ? 'firstName-error' : undefined}
                     />
                     {errors.firstName && (
-                      <FieldError className='text-error text-14'>
+                      <FieldError id='firstName-error' className='text-error text-14'>
                         {errors.firstName.message}
                       </FieldError>
                     )}
@@ -127,9 +129,11 @@ const RegisterForm: React.FC = () => {
                       placeholder="Doe"
                       type='text'
                       error={!!errors.lastName}
+                      aria-invalid={!!errors.lastName}
+                      aria-describedby={errors.lastName ? 'lastName-error' : undefined}
                     />
                     {errors.lastName && (
-                      <FieldError className='text-error text-14'>
+                      <FieldError id='lastName-error' className='text-error text-14'>
                         {errors.lastName.message}
                       </FieldError>
                     )}
@@ -146,9 +150,11 @@ const RegisterForm: React.FC = () => {
                     placeholder="example@dev.com"
                     type='email'
                     error={!!errors.email}
+                    aria-invalid={!!errors.email}
+                    aria-describedby={errors.email ? "email-error" : undefined}
                   />
                   {errors.email && (
-                    <FieldError className='text-error text-14'>
+                    <FieldError id='email-error' className='text-error text-14'>
                       {errors.email.message}
                     </FieldError>
                   )}
@@ -164,9 +170,11 @@ const RegisterForm: React.FC = () => {
                     autoComplete='new-password'
                     type='password'
                     error={!!errors.password}
+                    aria-invalid={!!errors.password}
+                    aria-describedby={errors.password ? "password-error" : undefined}
                   />
                   {errors.password && (
-                    <FieldError>
+                    <FieldError id='password-error'>
                       <small className='text-error text-14'>{errors.password.message}</small>
                     </FieldError>
                   )}
@@ -182,9 +190,11 @@ const RegisterForm: React.FC = () => {
                     autoComplete='new-password'
                     type='password'
                     error={!!errors.confirmPassword}
+                    aria-invalid={!!errors.confirmPassword}
+                    aria-describedby={errors.confirmPassword ? "comfirmPassword-error" : undefined}
                   />
                   {errors.confirmPassword && (
-                    <FieldError>
+                    <FieldError id='comfirmPassword-error'>
                       <small className='text-error text-14'>{errors.confirmPassword.message}</small>
                     </FieldError>
                   )}
@@ -199,6 +209,7 @@ const RegisterForm: React.FC = () => {
                         radioOptions={roleOptions}
                         value={field.value ?? ""}
                         onValueChange={field.onChange}
+                        error={!!errors?.role}
                       />
                     )}
                   />
@@ -224,7 +235,7 @@ const RegisterForm: React.FC = () => {
                             onCheckedChange={(checked) => field.onChange(checked === true)}
                             aria-invalid={!!errors.termsConditions}
                             className="text-white border-border" />
-                          <FieldLabel htmlFor='termsConditions' className='cursor-pointer'>I agree to the{" "}<Link href="#" className='text-primary'>Terms of Service</Link>{" "}and{" "}<Link href="#" className='text-primary'>Privacy Policy.</Link></FieldLabel>
+                          <FieldLabel htmlFor='termsConditions' className='cursor-pointer flex'>I agree to the{" "}<Link href="#" className='text-primary'>Terms of Service</Link>{" "}and{" "}<Link href="#" className='text-primary'>Privacy Policy.</Link></FieldLabel>
                         </div>
                       )}
                     />
