@@ -14,16 +14,16 @@ const AuthBanner: React.FC<Props> = (props) => {
         <Logo link='login' />
       </div>
 
-      <section className="pt-20">
-        <div className="space-y-6">
+      <section className="pt-14">
+        <div className="space-y-4">
           <h6 className="text-xs font-bold text-primary">YOUR NEXT CHAPTER STARTS HERE</h6>
 
-          <h2 className="text-[44px] font-bold leading-[125%]">
+          <h2 className="text-[44px] font-bold leading-[105%] tracking-tighter">
             Great careers start with real connections.
           </h2>
 
           <p>Find your people, grow your skills and take your next step with confidence.</p>
-          <Image src="/images/authLayoutBgg.avif" alt="" height={100} width={100} className="w-137 h-full rounded-2xl bg-contain" />
+          <Image src="/images/authLayoutBgg.avif" alt="" height={100} width={100} className="w-137 h-auto rounded-2xl bg-contain" />
 
           <div className="flex gap-3 items-center">
             <Image src="/images/authLayout2.png" alt="" height={50} width={100} className='w-auto h-auto' />

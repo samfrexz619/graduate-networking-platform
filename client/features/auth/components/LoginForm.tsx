@@ -11,6 +11,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/common/Logo';
+import { login } from '../api/auth.api';
+import { Loader } from 'lucide-react';
+import { toast } from '@/components/ui/toast';
 
 
 
@@ -20,6 +23,8 @@ interface Props {
 }
 
 const LoginForm: React.FC<Props> = (props) => {
+
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const {
     register,
@@ -35,14 +40,27 @@ const LoginForm: React.FC<Props> = (props) => {
     }
   });
 
-  const onSubmit = (data: LoginFormData) => {
-    console.log(data)
+  const onSubmit = async (data: LoginFormData) => {
+    setIsLoading(true);
+    try {
+      const response = await login(data);
+      console.log(response)
+    } catch (err) {
+      const errMessage = err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      toast.add({
+        type: "error",
+        description: errMessage
+      });
+    } finally {
+      setIsLoading(false);
+    }
+
   }
 
   return (
-    <section className='w-max-160 mx-auto'>
+    <section className='w-full max-w-160 mx-auto'>
       <div className='w-full hidden lg:flex justify-between items-center'>
-        <p>New to CareerConnect?</p>
+        <p className='text-13'>New to CareerConnect?</p>
         <Link href="/register" className='font-semibold text-primary text-14'>Create an account →</Link>
       </div>
       <div className='block lg:hidden'>
@@ -51,7 +69,7 @@ const LoginForm: React.FC<Props> = (props) => {
       <div className='pt-20 w-full md:w-110 mx-auto'>
         <h2 className='text-4xl font-bold'>Welcome back</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className='mt-4'>
+        <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-4'>
           <FieldGroup>
             <FieldSet>
               <FieldDescription className=''>
@@ -95,27 +113,29 @@ const LoginForm: React.FC<Props> = (props) => {
                   )}
                 </Field>
 
-                <div className='flex justify-between item-center'>
-                  <Controller
-                    name='rememberMe'
-                    control={control}
-                    render={({ field }) => (
-                      <div className='flex items-center gap-2'>
-                        <Checkbox
-                          id='rememberMe'
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                          className="text-white border-border" />
-                        <FieldLabel htmlFor='rememberMe' className='cursor-pointer'>Remember me</FieldLabel>
-                      </div>
-                    )}
-                  />
-
-                  <Link href="#" className='block text-primary text-14 font-bold'>Forgot password?</Link>
-                </div>
+                <Field data-invalid={!!errors.rememberMe} className='gap-1.5'>
+                  <div className='flex justify-between item-center'>
+                    <Controller
+                      name='rememberMe'
+                      control={control}
+                      render={({ field }) => (
+                        <div className='flex items-center gap-2'>
+                          <Checkbox
+                            id='rememberMe'
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            className="text-white border-border" />
+                          <FieldLabel htmlFor='rememberMe' className='cursor-pointer'>Remember me</FieldLabel>
+                        </div>
+                      )}
+                    />
+                    <Link href="#" className='block text-primary text-14 font-bold'>Forgot password?</Link>
+                  </div>
+                </Field>
                 <Field orientation={'horizontal'}>
-                  <Button type='submit' className="text-white h-11 border-none cursor-pointer rounded-lg flex w-full">
-                    Log in
+                  <Button type='submit' disabled={isLoading} className="text-white h-11 border-none cursor-pointer rounded-lg flex w-full">
+                    {isLoading && <Loader className="animate-spin" />}
+                    <span>{isLoading ? "Signing in..." : "Sign in"}</span>
                   </Button>
                 </Field>
               </FieldGroup>
