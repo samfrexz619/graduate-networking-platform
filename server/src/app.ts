@@ -6,6 +6,7 @@ import connectionRoutes from "./routes/connection.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 import conversationRoutes from "./routes/conversation.routes.js";
 import messageRoutes from "./routes/message.routes.js";
+import devRoutes from "./routes/dev.routes.js";
 
 
 
@@ -20,6 +21,9 @@ app.use("/api/v1/connections", connectionRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/conversations", conversationRoutes);
 app.use("/api/v1/messages", messageRoutes);
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api/v1/dev", devRoutes);
+}
 app.get("/api/v1/health", (_req, res) => {
 
   res.status(200).json({

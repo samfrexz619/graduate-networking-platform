@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import crypto from "crypto";
-import { User } from "../models/User.js";
+import { User, UserRole } from "../models/User.js";
 import { generateToken } from "../utils/generateToken.js";
 import type { AuthRequest } from "../types/auth.types.js";
 import { sendEmail } from "../services/email.service.js";
@@ -29,7 +29,11 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     };
 
-    const existingUser = await User.findOne({ email, });
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existingUser = await User.findOne({
+      email: normalizedEmail
+    });
 
     if (existingUser) {
       res.status(409).json({
@@ -42,6 +46,18 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // 
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    // validate the allowed roles
+    const allowedRoles = Object.values(UserRole);
+
+    if (!allowedRoles.includes(role)) {
+      res.status(400).json({
+        success: false,
+        message: "Invalid user role"
+      })
+      return;
+    }
+
 
     // creating new user
     const user = await User.create({
