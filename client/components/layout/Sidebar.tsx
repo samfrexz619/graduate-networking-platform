@@ -48,7 +48,7 @@ const Sidebar: React.FC<Props> = (props) => {
       <div className='pt-6'>
         <Link href="/dashboard" className='flex items-center gap-2'>
           <Image src="/images/logo.svg" height={100} width={100} alt='company logo' className='w-10 h-10' />
-          <h6 className='font-bold font-jetBrainsMono'>CareerConnect</h6>
+          <h6 className='font-bold font-jetBrainsMono'>OrbitGrad</h6>
         </Link>
       </div>
       <nav aria-label="Main navigation" className='flex-1 space-y-1 mt-10'>

@@ -35,7 +35,7 @@ const CustomInput: React.FC<CustomInputProps> = ({
     <>
       <InputGroup className={cn('border w-full h-11.5 rounded-lg px-2',
         error
-          ? 'border-error'
+          ? 'border-error has-[[data-slot][aria-invalid=true]]:border-error has-[[data-slot=input-group-control]:focus-visible]:border-error has-[[data-slot][aria-invalid=true]]:ring-0'
           : isFocused
             ? 'border-primary'
             : 'border-border')}>

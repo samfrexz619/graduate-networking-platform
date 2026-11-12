@@ -12,7 +12,7 @@ const Logo: React.FC<LogoProp> = ({ link }) => {
     <>
       <Link href={`/${link}`} className="flex items-center gap-2">
         <Image src="/images/logo.svg" height={45} width={45} alt="company logo" className="size-11.25" />
-        <h6 className="font-bold">CareerConnect</h6>
+        <h6 className="font-bold">OrbitGrad</h6>
       </Link>
     </>
   )

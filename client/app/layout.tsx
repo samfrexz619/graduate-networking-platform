@@ -18,7 +18,7 @@ const jetBrainsMono = JetBrains_Mono({
 
 
 export const metadata: Metadata = {
-  title: "CareerConnect",
+  title: "OrbitGrad",
   description: "AI-powered professional networking for students and graduates in the UK.",
 };
 

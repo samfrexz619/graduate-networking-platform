@@ -11,7 +11,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/common/Logo';
-import { login } from '../api/auth.api';
+import { loginUser } from '../api/auth.api';
 import { Loader } from 'lucide-react';
 import { toast } from '@/components/ui/toast';
 
@@ -43,7 +43,7 @@ const LoginForm: React.FC<Props> = (props) => {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await login(data);
+      const response = await loginUser(data);
       console.log(response)
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : "Something went wrong. Please try again.";
@@ -60,7 +60,7 @@ const LoginForm: React.FC<Props> = (props) => {
   return (
     <section className='w-full max-w-160 mx-auto'>
       <div className='w-full hidden lg:flex justify-between items-center'>
-        <p className='text-13'>New to CareerConnect?</p>
+        <p className='text-13'>New to OrbitGrad?</p>
         <Link href="/register" className='font-semibold text-primary text-14'>Create an account →</Link>
       </div>
       <div className='block lg:hidden'>
@@ -92,7 +92,7 @@ const LoginForm: React.FC<Props> = (props) => {
                   />
                   {errors.email && (
                     <FieldError id='email-error' className='text-error text-14'>
-                      {errors.email.message}
+                      <small className='text-error'>{errors.email.message}</small>
                     </FieldError>
                   )}
                 </Field>
@@ -112,7 +112,7 @@ const LoginForm: React.FC<Props> = (props) => {
                   />
                   {errors.password && (
                     <FieldError id='password-error'>
-                      <small className='text-error text-14'>{errors.password.message}</small>
+                      <small className='text-error'>{errors.password.message}</small>
                     </FieldError>
                   )}
                 </Field>

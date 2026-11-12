@@ -3,6 +3,8 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { BookOpen, BriefcaseBusiness, GraduationCap, Loader, Users } from 'lucide-react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema } from '../schemas/auth.schema';
 import Logo from '@/components/common/Logo';
@@ -10,9 +12,13 @@ import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet }
 import CustomInput from '@/components/ui/CustomInput';
 import type { RegisterFormData } from '../schemas/auth.schema';
 import ChoiceCard from '@/components/ui/ChoiceCard';
-import { BookOpen, BriefcaseBusiness, GraduationCap, Loader, Users } from 'lucide-react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Button } from '@/components/ui/button';
+import { registerUser } from '../api/auth.api';
+import { toast } from '@/components/ui/toast';
+
+
+
 
 // so that it doesn't render everytime the comp renders since it is a static data
 const roleOptions = [
@@ -64,13 +70,41 @@ const RegisterForm: React.FC = () => {
   });
 
   const [isLoading, setIsLoading] = React.useState(false);
+  const router = useRouter();
 
   const onSubmit = async (data: RegisterFormData) => {
+
     setIsLoading(true);
+
     try {
-      console.log(data);
+      const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        password: data.password,
+        role: data.role
+      };
+
+      const res = await registerUser(payload);
+
+      if (res.success) {
+        router.push(`/verify-email-pending?email=${encodeURIComponent(res.data.email)}`)
+        toast.add({
+          type: "success",
+          description: res.message
+        })
+        console.log(data);
+      }
+
     } catch (error) {
       console.error("Error occurred while submitting registration form:", error);
+      toast.add({
+        type: "error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Something went wrong. Please try again.",
+      });
     } finally {
       setIsLoading(false);
     }
