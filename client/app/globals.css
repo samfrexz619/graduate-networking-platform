@@ -39,6 +39,8 @@
   --color-warning: var(--warning);
   --color-error: var(--error);
 
+  /* --color */
+
   --font-sans: var(--font-inter);
   --font-jetBrainsMono: var(--font-jetBrainsMono);
 

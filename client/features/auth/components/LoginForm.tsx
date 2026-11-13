@@ -61,7 +61,7 @@ const LoginForm: React.FC<Props> = (props) => {
     <section className='w-full max-w-160 mx-auto'>
       <div className='w-full hidden lg:flex justify-between items-center'>
         <p className='text-13'>New to OrbitGrad?</p>
-        <Link href="/register" className='font-semibold text-primary text-14'>Create an account →</Link>
+        <Link href="/auth/register" className='font-semibold text-primary text-14'>Create an account →</Link>
       </div>
       <div className='block lg:hidden'>
         <Logo link='login' />
@@ -133,7 +133,7 @@ const LoginForm: React.FC<Props> = (props) => {
                         </div>
                       )}
                     />
-                    <Link href="#" className='block text-primary text-14 font-bold'>Forgot password?</Link>
+                    <Link href="/auth/forgot-password" className='block text-primary text-14 font-bold'>Forgot password?</Link>
                   </div>
                 </Field>
                 <Field orientation={'horizontal'}>
@@ -149,7 +149,7 @@ const LoginForm: React.FC<Props> = (props) => {
         <div className='mt-8 space-y-6'>
           <i className='w-full block bg-border h-px'></i>
           <p className='text-center text-13 text-[#64748B]'>A new connection. A little guidance. A clearer next step.</p>
-          <p className='text-center text-13'>Don’t have an account? <Link href="#" className='font-semibold text-primary'>Create an account</Link></p>
+          <p className='text-center text-13'>Don’t have an account? <Link href="/auth/register" className='font-semibold text-primary'>Create an account</Link></p>
         </div>
       </div>
     </section>

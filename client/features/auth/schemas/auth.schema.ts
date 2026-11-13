@@ -18,6 +18,22 @@ export const loginSchema = z.object({
 
 export type LoginFormData = z.infer<typeof loginSchema>;
 
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(1, "Password is required")
+    .min(6, "Password must be at least 6 characters."),
+  confirmPassword: z
+    .string()
+    .min(1, "Confirm password is required")
+    .min(6, "Confirm password must be the same as the password."),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match.",
+  path: ["confirmPassword"],
+})
+
+export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
+
 const roles = ["student", "recruiter", "graduate", "mentor"] as const;
 
 export const registerSchema = z.object({
@@ -56,3 +72,10 @@ export const registerSchema = z.object({
 })
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
+
+export const forgotPasswordSchema = loginSchema.omit({
+  password: true,
+  rememberMe: true
+});
+
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>

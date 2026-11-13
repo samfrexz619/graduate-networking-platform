@@ -1,3 +1,4 @@
+import VerifyEmailPending from '@/features/auth/components/VerifyEmailPending';
 import React from 'react';
 
 interface Props {
@@ -6,9 +7,7 @@ interface Props {
 
 const VerifyEmailPendingPage: React.FC<Props> = (props) => {
   return (
-    <div>
-
-    </div>
+    <VerifyEmailPending />
   );
 }
 

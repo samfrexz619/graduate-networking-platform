@@ -114,7 +114,7 @@ const RegisterForm: React.FC = () => {
     <section className='mx-auto w-full max-w-160'>
       <div className='w-full hidden lg:flex justify-between items-center'>
         <p className='text-13'>Already have an account?</p>
-        <Link href="/login" className='font-semibold text-primary text-14'>Log in</Link>
+        <Link href="/auth/login" className='font-semibold text-primary text-14'>Log in</Link>
       </div>
       <div className='block lg:hidden'>
         <Logo link='login' />
@@ -256,8 +256,8 @@ const RegisterForm: React.FC = () => {
                     )
                   }
                 </Field>
-                <Field data-invalid={!!errors.termsConditions} className='gap-1.5'>
-                  <div className='flex gap-2 item-center'>
+                <Field data-invalid={!!errors.termsConditions} className='gap-1.5 w-full'>
+                  <div className='w-full flex gap-2 item-center'>
                     <Controller
                       name='termsConditions'
                       control={control}
@@ -269,7 +269,8 @@ const RegisterForm: React.FC = () => {
                             onCheckedChange={(checked) => field.onChange(checked === true)}
                             aria-invalid={!!errors.termsConditions}
                             className="text-white border-border" />
-                          <FieldLabel htmlFor='termsConditions' className='cursor-pointer flex'>I agree to the{" "}<Link href="#" className='text-primary'>Terms of Service</Link>{" "}and{" "}<Link href="#" className='text-primary'>Privacy Policy.</Link></FieldLabel>
+
+                          <FieldLabel htmlFor='termsConditions' className='cursor-pointer block w-full'>I agree to the{" "}<Link href="#" className='text-primary'>Terms of Service</Link>{" "}and{" "}<Link href="#" className='text-primary'>Privacy Policy.</Link></FieldLabel>
                         </div>
                       )}
                     />

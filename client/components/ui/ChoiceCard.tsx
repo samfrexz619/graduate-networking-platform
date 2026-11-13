@@ -31,12 +31,12 @@ const ChoiceCard: React.FC<ChoiceCardProps> = (props) => {
     disabled, } = props;
 
   return (
-    <RadioGroupPrimitive.Root aria-labelledby="role-label" aria-invalid={error} value={value} onValueChange={onValueChange} disabled={disabled} className="grid md:grid-cols-2 gap-3">
+    <RadioGroupPrimitive.Root aria-labelledby="role-label" aria-invalid={error} value={value} onValueChange={onValueChange} disabled={disabled} className="grid grid-cols-2 gap-3">
       {radioOptions.map(option => (
         <label
           key={option.value}
           className={cn(
-            "flex flex-col cursor-pointer items-start gap-2 rounded-lg",
+            "flex items-end md:flex-col cursor-pointer md:items-start gap-2 rounded-lg",
             "border border-border p-2 transition-colors",
             "hover:border-primary",
             "has-data-[state=checked]:border-primary",
@@ -45,7 +45,7 @@ const ChoiceCard: React.FC<ChoiceCardProps> = (props) => {
             "has-data-disabled:opacity-50"
           )}
         >
-          <div className="w-full flex justify-between">
+          <div className="w-auto md:w-full flex justify-between">
             <RadioGroupPrimitive.Item
               value={option.value}
               className={cn(
@@ -64,18 +64,18 @@ const ChoiceCard: React.FC<ChoiceCardProps> = (props) => {
               </RadioGroupPrimitive.Indicator>
             </RadioGroupPrimitive.Item>
             {option.icon && (
-              <span className="text-secondary-text">
+              <span className="text-secondary-text hidden md:block">
                 {option.icon}
               </span>
             )}
           </div>
 
-          <span className="flex flex-col gap-1">
-            <span className="text-sm font-medium">
+          <span className="flex md:flex-col gap-1">
+            <span className="text-sm block font-medium">
               {option.label}
             </span>
             {option.description && (
-              <p className="text-xs text-secondary-text">
+              <p className="text-xs text-secondary-text hidden md:block">
                 {option.description}
               </p>
             )}

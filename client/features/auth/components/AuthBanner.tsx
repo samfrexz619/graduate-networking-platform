@@ -11,7 +11,7 @@ const AuthBanner: React.FC<Props> = (props) => {
   return (
     <>
       <div>
-        <Logo link='login' />
+        <Logo link='auth/login' />
       </div>
 
       <section className="pt-14">
