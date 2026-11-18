@@ -71,7 +71,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     });
 
     // verification link
-    const verificationUrl = `${env.CLIENT_URL}/verify-email/${verificationToken}`;
+    const verificationUrl = `${env.CLIENT_URL}/auth/verify-email/${verificationToken}`;
 
     await sendEmail(
       user.email,
