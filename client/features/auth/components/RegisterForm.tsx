@@ -87,14 +87,13 @@ const RegisterForm: React.FC = () => {
 
       const res = await registerUser(payload);
 
-      if (res.success) {
-        router.push(`/verify-email-pending?email=${encodeURIComponent(res.data.email)}`)
-        toast.add({
-          type: "success",
-          description: res.message
-        })
-        console.log(data);
-      }
+      toast.add({
+        type: "success",
+        description: res.message
+      });
+
+      router.push(`/auth/verify-email-pending?email=${encodeURIComponent(res.data.email)}`)
+
 
     } catch (error) {
       console.error("Error occurred while submitting registration form:", error);
@@ -120,7 +119,7 @@ const RegisterForm: React.FC = () => {
         <Logo link='login' />
       </div>
 
-      <div className='pt-20 w-full md:w-110 mx-auto'>
+      <div className='pt-8 lg:pt-20 w-full md:w-110 mx-auto'>
         <h2 className='text-2xl lg:text-4xl font-bold'>Start your next chapter</h2>
 
         <form noValidate onSubmit={handleSubmit(onSubmit)} className='mt-4'>
@@ -142,6 +141,7 @@ const RegisterForm: React.FC = () => {
                       autoComplete='given-name'
                       placeholder="Jane"
                       type='text'
+                      className='capitalize'
                       error={!!errors.firstName}
                       aria-invalid={!!errors.firstName}
                       aria-describedby={errors.firstName ? 'firstName-error' : undefined}
@@ -159,6 +159,7 @@ const RegisterForm: React.FC = () => {
                     <CustomInput
                       {...register("lastName")}
                       inputId='lastName'
+                      className='capitalize'
                       autoComplete='family-name'
                       placeholder="Doe"
                       type='text'
@@ -225,10 +226,10 @@ const RegisterForm: React.FC = () => {
                     type='password'
                     error={!!errors.confirmPassword}
                     aria-invalid={!!errors.confirmPassword}
-                    aria-describedby={errors.confirmPassword ? "comfirmPassword-error" : undefined}
+                    aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
                   />
                   {errors.confirmPassword && (
-                    <FieldError id='comfirmPassword-error'>
+                    <FieldError id='confirmPassword-error'>
                       <small className='text-error text-14'>{errors.confirmPassword.message}</small>
                     </FieldError>
                   )}

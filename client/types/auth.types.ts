@@ -21,3 +21,8 @@ export interface RegisterResponse {
     role: RegisterFormData["role"];
   };
 }
+
+export interface VerifyEmailResponse {
+  success: boolean;
+  message: string;
+}

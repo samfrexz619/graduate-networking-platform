@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { success } from "zod";
 
 
 const BACKEND_API_URL =
   process.env.BACKEND_API_URL ?? "http://localhost:5001";
 
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 

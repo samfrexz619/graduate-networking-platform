@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { Mail } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { cn } from 'cn';
+import { Button } from '@/components/ui/button';
 
 interface Props {
 
@@ -31,7 +31,9 @@ const VerifyEmailPending: React.FC<Props> = (props) => {
         <p>We've sent a verification link to your email address. Please verify your email to activate your OrbitGrad account.</p>
 
         <div className='w-full bg-[#F8FAFC] h-12.25 pl-3 rounded-lg flex items-center'>
-          <p className='font-semibold text-14'>alex.morgan@gmail.com</p>
+          <p className='font-semibold text-14'>
+            {email || "example@test.com"}
+          </p>
         </div>
 
         <Button type='submit' className={cn("text-white h-11 border-none cursor-pointer rounded-lg bg-primary/60! flex w-full",)}>

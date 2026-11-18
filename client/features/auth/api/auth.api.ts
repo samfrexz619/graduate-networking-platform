@@ -1,5 +1,5 @@
 import { apiRequest } from "@/lib/api";
-import { LoginRequest, RegisterPayload, RegisterResponse } from "@/types/auth.types";
+import { LoginRequest, RegisterPayload, RegisterResponse, VerifyEmailResponse } from "@/types/auth.types";
 
 
 
@@ -15,5 +15,14 @@ export function registerUser(data: RegisterPayload): Promise<RegisterResponse> {
   return apiRequest<RegisterResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify(data),
+  })
+}
+
+export function verifyEmail(
+  token: string
+): Promise<VerifyEmailResponse> {
+  return apiRequest<VerifyEmailResponse>(`/auth/verify-email/${encodeURIComponent(token)}`, {
+    method: "GET",
+    cache: "no-store"
   })
 }

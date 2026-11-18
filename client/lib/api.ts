@@ -18,5 +18,9 @@ export async function apiRequest<T>(
   if (!res.ok) {
     throw new Error(data.message || "Something went wrong");
   }
-  return data;
+  // responses that have invalid JSON
+  if (data === null) {
+    throw new Error("The server returned an invalid response.");
+  }
+  return data as T;
 }
