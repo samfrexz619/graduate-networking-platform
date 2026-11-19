@@ -1,10 +1,12 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Mail } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { cn } from 'cn';
 import { Button } from '@/components/ui/button';
+import { resendVerificationEmail } from '../api/auth.api';
+import { toast } from '@/components/ui/toast';
 
 interface Props {
 
@@ -14,7 +16,53 @@ const VerifyEmailPending: React.FC<Props> = (props) => {
   const searchParams = useSearchParams();
   const email = searchParams.get("email");
 
-  const [disabled, setIsDisabled] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const handleResendVerification = async () => {
+    if (!email || isResending || resendCooldown > 0) {
+      return;
+    }
+    try {
+      setIsResending(true);
+
+      const res = await resendVerificationEmail({ email });
+      toast.add({
+        type: "success",
+        description: res.message
+      });
+
+      setResendCooldown(60);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.add({
+          type: "error",
+          description: error.message
+        });
+      } else {
+        toast.add({
+          type: "error",
+          description: "Unable to resend verification email."
+        });
+      }
+
+    } finally {
+      setIsResending(false);
+    }
+  }
+
+  useEffect(() => {
+    if (resendCooldown <= 0) {
+      return
+    }
+
+    const timer = setTimeout(() => {
+      setResendCooldown(prev => prev - 1)
+    }, 1000);
+
+    return () => clearTimeout(timer);
+
+  }, [resendCooldown])
 
   return (
     <section>
@@ -36,8 +84,15 @@ const VerifyEmailPending: React.FC<Props> = (props) => {
           </p>
         </div>
 
-        <Button type='submit' className={cn("text-white h-11 border-none cursor-pointer rounded-lg bg-primary/60! flex w-full",)}>
-          Resend available in 24 hours
+        <Button
+          disabled={isResending || resendCooldown > 0}
+          onClick={handleResendVerification}
+          type='submit' className={cn("text-white h-11 border-none cursor-pointer rounded-lg bg-primary/60! flex w-full",)}>
+          {isResending
+            ? "Sending..."
+            : resendCooldown > 0
+              ? `Resend in ${resendCooldown}s`
+              : "Resend verification email"}
         </Button>
         <p className="mt-5 text-sm text-secondary-text">
           The verification link expires in 24 hours.

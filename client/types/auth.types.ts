@@ -26,3 +26,13 @@ export interface VerifyEmailResponse {
   success: boolean;
   message: string;
 }
+
+export interface ResendVerificationResponse {
+  success: boolean;
+  message: string;
+  retryAfterSeconds?: number;
+}
+
+export interface ResendVerificationPayload {
+  email: string;
+}

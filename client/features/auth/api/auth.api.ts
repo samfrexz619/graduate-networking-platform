@@ -1,5 +1,6 @@
 import { apiRequest } from "@/lib/api";
-import { LoginRequest, RegisterPayload, RegisterResponse, VerifyEmailResponse } from "@/types/auth.types";
+import { LoginRequest, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, VerifyEmailResponse } from "@/types/auth.types";
+
 
 
 
@@ -25,4 +26,13 @@ export function verifyEmail(
     method: "GET",
     cache: "no-store"
   })
+}
+
+export function resendVerificationEmail(
+  payload: ResendVerificationPayload
+): Promise<ResendVerificationResponse> {
+  return apiRequest<ResendVerificationResponse>(`/auth/resend-verification`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
 }
