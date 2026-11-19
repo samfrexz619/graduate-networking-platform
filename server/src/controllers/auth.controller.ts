@@ -161,7 +161,107 @@ export const verifyEmail = async (req: Request, res: Response): Promise<void> =>
     })
   }
 
-}
+};
+
+export const resendVerificationEmail = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email } = req.body;
+
+    if (!email || typeof email !== "string") {
+      res.status(400).json({
+        success: false,
+        message: "Please provide a valid email address."
+      });
+      return;
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const user = await User.findOne({
+      email: normalizedEmail
+    });
+
+    // Generic response to avoid exposing whether an account exists.
+    const genericMessage =
+      "If an unverified account exists with this email, a verification email will be sent.";
+
+    if (!user || user.isVerified) {
+      res.status(200).json({
+        success: true,
+        message: genericMessage,
+      });
+      return;
+    }
+
+    // 60 secs cooldown
+    const coolDownMs = 60 * 1000;
+
+    if (user.verificationEmailLastSentAt) {
+      const elapsed = Date.now() - user.verificationEmailLastSentAt.getTime();
+
+      const remainingCoolDown = coolDownMs - elapsed;
+
+      if (remainingCoolDown > 0) {
+        res.status(429).json({
+          success: false,
+          message: "Please wait before requesting another verification email.",
+          retryAfterSeconds: Math.ceil(remainingCoolDown / 1000)
+        });
+        return
+      }
+    }
+
+    // generate a new verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const verificationTokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    // Update the user's verification information
+    user.verificationToken = verificationToken;
+    user.verificationTokenExpires = verificationTokenExpires;
+    user.verificationEmailLastSentAt = new Date();
+
+    await user.save();
+
+    const verificationUrl = `${env.CLIENT_URL}/auth/verify-email/${verificationToken}`;
+
+    const html = `
+      <div>
+        <h2>Verify your Orbit-Grad account</h2>
+
+        <p>
+          Please verify your email address to complete
+          your Orbit-Grad registration.
+        </p>
+
+        <a href="${verificationUrl}">
+          Verify my email
+        </a>
+
+        <p>
+          This verification link expires in 24 hours.
+        </p>
+      </div>
+    `;
+
+    await sendEmail(
+      user.email,
+      "Verify your Orbit-Grad email address",
+      html
+    );
+
+    res.status(200).json({
+      success: true,
+      message: genericMessage
+    });
+  } catch (error) {
+    console.error("Resend verification email error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Unable to send verification email. Please try again later.",
+    });
+  }
+};
 
 export const login = async (req: Request, res: Response): Promise<void> => {
 
