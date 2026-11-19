@@ -36,3 +36,13 @@ export interface ResendVerificationResponse {
 export interface ResendVerificationPayload {
   email: string;
 }
+
+export interface ForgotPasswordPayload extends ResendVerificationPayload { }
+
+export interface ForgotPasswordResponse extends VerifyEmailResponse { }
+
+export interface ResetPasswordResponse extends VerifyEmailResponse { }
+
+export interface ResetPasswordPayload {
+  password: string;
+}

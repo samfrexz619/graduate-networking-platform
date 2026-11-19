@@ -104,6 +104,8 @@ const VerifyEmailPending: React.FC<Props> = (props) => {
         >
           Back to login
         </Link>
+
+        <p className='text-13 mt-6 text-[#64748B]'>Request received. Please check your inbox and spam folder.</p>
       </section>
     </section>
   );

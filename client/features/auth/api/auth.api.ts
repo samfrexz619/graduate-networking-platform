@@ -1,5 +1,5 @@
 import { apiRequest } from "@/lib/api";
-import { LoginRequest, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, VerifyEmailResponse } from "@/types/auth.types";
+import { ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, ResetPasswordPayload, ResetPasswordResponse, VerifyEmailResponse } from "@/types/auth.types";
 
 
 
@@ -32,6 +32,25 @@ export function resendVerificationEmail(
   payload: ResendVerificationPayload
 ): Promise<ResendVerificationResponse> {
   return apiRequest<ResendVerificationResponse>(`/auth/resend-verification`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function forgotPassword(
+  payload: ForgotPasswordPayload
+): Promise<ForgotPasswordResponse> {
+  return apiRequest<ForgotPasswordResponse>(`/auth/forgot-password`, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export function resetPassword(
+  token: string,
+  payload: ResetPasswordPayload
+): Promise<ResetPasswordResponse> {
+  return apiRequest<ResendVerificationResponse>(`/auth/reset-password/${encodeURIComponent(token)}`, {
     method: "POST",
     body: JSON.stringify(payload)
   });

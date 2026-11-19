@@ -1,7 +1,7 @@
-import ForgotPassword from '@/features/auth/components/ForgotPassword';
 import React from 'react';
+import ForgotPassword from '@/features/auth/components/ForgotPassword';
 
-const ForgotPasswordPage = () => {
+const ForgotPasswordPage: React.FC = () => {
   return (
     <ForgotPassword />
   );

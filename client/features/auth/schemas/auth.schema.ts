@@ -11,7 +11,7 @@ export const loginSchema = z.object({
   password: z
     .string()
     .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters."),
+    .min(8, "Password must be at least 8 characters."),
 
   rememberMe: z.boolean(),
 });
@@ -22,11 +22,11 @@ export const resetPasswordSchema = z.object({
   password: z
     .string()
     .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters."),
+    .min(8, "Password must be at least 8 characters."),
   confirmPassword: z
     .string()
     .min(1, "Confirm password is required")
-    .min(6, "Confirm password must be the same as the password."),
+    .min(8, "Confirm password must be the same as the password."),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords do not match.",
   path: ["confirmPassword"],
@@ -55,11 +55,11 @@ export const registerSchema = z.object({
   password: z
     .string()
     .min(1, "Password is required")
-    .min(6, "Password must be at least 6 characters."),
+    .min(8, "Password must be at least 8 characters."),
   confirmPassword: z
     .string()
     .min(1, "Confirm password is required")
-    .min(6, "Confirm password must be the same as the password."),
+    .min(8, "Confirm password must be the same as the password."),
   role: z.enum(roles, {
     error: "Please select a valid role.",
   }),

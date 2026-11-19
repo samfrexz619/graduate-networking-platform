@@ -16,6 +16,9 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 
     const backendResponse = await fetch(`${BACKEND_API_URL}/api/v1/auth/verify-email/${encodeURIComponent(token)}`, {
       method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
       cache: "no-store"
     });
 

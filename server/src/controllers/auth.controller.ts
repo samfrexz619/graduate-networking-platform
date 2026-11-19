@@ -29,6 +29,14 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       return;
     };
 
+    if (typeof password !== "string" || password.length < 8) {
+      res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long"
+      });
+      return;
+    }
+
     const normalizedEmail = email.trim().toLowerCase();
 
     const existingUser = await User.findOne({
@@ -401,7 +409,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<void>
 
     await user.save();
 
-    const resetUrl = `${env.CLIENT_URL}/reset-password/${resetToken}`;
+    const resetUrl = `${env.CLIENT_URL}/auth/reset-password/${resetToken}`;
 
     await sendEmail(
       user.email,
@@ -451,10 +459,18 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    if (!password) {
+    if (typeof password !== "string" || !password) {
       res.status(400).json({
         success: false,
         message: "Password is required"
+      });
+      return;
+    }
+
+    if (password.length < 8) {
+      res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long"
       });
       return;
     };
@@ -476,6 +492,7 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
 
     user.password = password;
 
+    // Invalidate the reset token
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
 

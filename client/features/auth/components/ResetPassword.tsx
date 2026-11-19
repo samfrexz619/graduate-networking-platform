@@ -6,12 +6,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader } from 'lucide-react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
+import { cn } from 'cn';
 
 
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
 import { ResetPasswordData, resetPasswordSchema } from '../schemas/auth.schema';
 import { Button } from '@/components/ui/button';
-import { cn } from 'cn';
 
 interface Props {
 
