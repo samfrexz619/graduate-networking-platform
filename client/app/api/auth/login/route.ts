@@ -13,7 +13,8 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
+      cache: "no-store"
     });
 
     const data = await backendResponse.json();

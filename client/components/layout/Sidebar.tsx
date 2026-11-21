@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from 'cn';
-import { Bell, LayoutDashboardIcon, MessageSquareText, User, UsersRoundCollaboration } from 'lucide-react';
+import { Bell, LayoutDashboardIcon, MessageSquareText, Settings, User, UsersRoundCollaboration } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -40,6 +40,11 @@ const Sidebar: React.FC<Props> = (props) => {
       routeName: "Notifications",
       routePath: "/notifications",
       icon: <Bell size={18} />
+    },
+    {
+      routeName: "Settings",
+      routePath: "/settings",
+      icon: <Settings size={18} />
     },
   ];
 

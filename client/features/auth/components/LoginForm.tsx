@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useForm, Controller } from 'react-hook-form';
+import { useSearchParams, useRouter } from "next/navigation";
 
 import CustomInput from '@/components/ui/CustomInput';
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldSet } from '@/components/ui/field';
@@ -25,6 +26,10 @@ interface Props {
 const LoginForm: React.FC<Props> = (props) => {
 
   const [isLoading, setIsLoading] = React.useState(false);
+  const searchParams = useSearchParams();
+
+  const redirectTo = searchParams.get("redirect");
+  const router = useRouter();
 
   const {
     register,
@@ -40,11 +45,22 @@ const LoginForm: React.FC<Props> = (props) => {
     }
   });
 
+  const safeRedirect =
+    redirectTo?.startsWith("/") &&
+      !redirectTo.startsWith("//")
+      ? redirectTo
+      : "/dashboard";
+
+
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await loginUser(data);
-      console.log(response)
+      const res = await loginUser(data);
+      console.log("Login response:", res);
+      console.log("Redirect destination:", safeRedirect);
+      // window.location.assign(safeRedirect);
+      router.replace(safeRedirect);
+      // router.refresh();
     } catch (err) {
       const errMessage = err instanceof Error ? err.message : "Something went wrong. Please try again.";
       toast.add({
@@ -54,7 +70,6 @@ const LoginForm: React.FC<Props> = (props) => {
     } finally {
       setIsLoading(false);
     }
-
   }
 
   return (

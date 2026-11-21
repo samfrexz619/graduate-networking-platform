@@ -1,12 +1,12 @@
 import { apiRequest } from "@/lib/api";
-import { ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, ResetPasswordPayload, ResetPasswordResponse, VerifyEmailResponse } from "@/types/auth.types";
+import { ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, LoginUserResponse, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, ResetPasswordPayload, ResetPasswordResponse, VerifyEmailResponse } from "@/types/auth.types";
 
 
 
 
 
-export function loginUser(data: LoginRequest) {
-  return apiRequest("/auth/login", {
+export function loginUser(data: LoginRequest): Promise<LoginUserResponse> {
+  return apiRequest<LoginUserResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify(data)
   });

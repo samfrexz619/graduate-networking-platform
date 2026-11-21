@@ -1,6 +1,14 @@
 import { RegisterFormData } from "@/features/auth/schemas/auth.schema";
 
 
+interface LoginData {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+}
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -31,6 +39,10 @@ export interface ResendVerificationResponse {
   success: boolean;
   message: string;
   retryAfterSeconds?: number;
+}
+
+export interface LoginUserResponse extends VerifyEmailResponse {
+  data: LoginData;
 }
 
 export interface ResendVerificationPayload {
