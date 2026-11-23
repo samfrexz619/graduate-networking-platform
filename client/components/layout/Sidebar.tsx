@@ -1,11 +1,14 @@
 "use client";
 
-import { cn } from 'cn';
-import { Bell, LayoutDashboardIcon, MessageSquareText, Settings, User, UsersRoundCollaboration } from 'lucide-react';
+import { Bell, LayoutDashboardIcon, MessageSquareText, Settings, User, UsersRoundCollaboration, LogOutIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
+import { cn } from 'cn';
+import { logout } from '@/features/auth/api/auth.api';
 import React from 'react';
+import { toast } from '../ui/toast';
 
 interface Props {
 
@@ -14,6 +17,8 @@ interface Props {
 const Sidebar: React.FC<Props> = (props) => {
 
   const pathname = usePathname();
+
+  const router = useRouter();
 
   const navLinks = [
     {
@@ -48,6 +53,23 @@ const Sidebar: React.FC<Props> = (props) => {
     },
   ];
 
+  const handleLogout = async () => {
+    try {
+      const res = await logout();
+      toast.add({
+        type: "success",
+        description: res.message
+      });
+      router.push("/auth/login");
+    } catch (error) {
+      const errMessage = error instanceof Error ? error.message : "Something went wrong. Please try again.";
+      toast.add({
+        type: "error",
+        description: errMessage
+      });
+    }
+  }
+
   return (
     <aside className='flex h-full flex-col px-8'>
       <div className='pt-6'>
@@ -70,6 +92,10 @@ const Sidebar: React.FC<Props> = (props) => {
           }
         </ul>
       </nav>
+      <button onClick={handleLogout} className='flex justify-start pb-2 gap-3 items-center font-semibold cursor-pointer'>
+        <LogOutIcon size={20} />
+        Log out
+      </button>
     </aside>
   );
 }

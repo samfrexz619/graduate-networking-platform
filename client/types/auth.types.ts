@@ -55,6 +55,8 @@ export interface ForgotPasswordResponse extends VerifyEmailResponse { }
 
 export interface ResetPasswordResponse extends VerifyEmailResponse { }
 
+export interface LogoutResponse extends VerifyEmailResponse { }
+
 export interface ResetPasswordPayload {
   password: string;
 }

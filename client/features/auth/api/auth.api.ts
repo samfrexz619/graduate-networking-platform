@@ -1,5 +1,5 @@
 import { apiRequest } from "@/lib/api";
-import { ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, LoginUserResponse, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, ResetPasswordPayload, ResetPasswordResponse, VerifyEmailResponse } from "@/types/auth.types";
+import { ForgotPasswordPayload, ForgotPasswordResponse, LoginRequest, LoginUserResponse, LogoutResponse, RegisterPayload, RegisterResponse, ResendVerificationPayload, ResendVerificationResponse, ResetPasswordPayload, ResetPasswordResponse, VerifyEmailResponse } from "@/types/auth.types";
 
 
 
@@ -54,4 +54,10 @@ export function resetPassword(
     method: "POST",
     body: JSON.stringify(payload)
   });
+}
+
+export function logout(): Promise<LogoutResponse> {
+  return apiRequest<LogoutResponse>(`/auth/logout`, {
+    method: "POST"
+  })
 }
