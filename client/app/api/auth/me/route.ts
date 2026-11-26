@@ -15,9 +15,10 @@ export async function GET(req: NextRequest) {
       },
       cache: "no-store"
     });
+    // 
 
-    const data = backendResponse.json();
-
+    const data = await backendResponse.json();
+    console.log(data)
     return NextResponse.json(data, {
       status: backendResponse.status
     })

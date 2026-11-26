@@ -60,3 +60,21 @@ export interface LogoutResponse extends VerifyEmailResponse { }
 export interface ResetPasswordPayload {
   password: string;
 }
+
+interface CurrentUser {
+  verificationEmailLastSentAt?: string;
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  profileCompleted: boolean;
+  isVerified: boolean;
+  profilePicture?: string;
+}
+
+export interface GetCurrentUserResponse {
+  success: boolean;
+  message: string;
+  data: CurrentUser;
+}

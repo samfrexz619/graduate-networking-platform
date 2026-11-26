@@ -78,7 +78,7 @@ const Sidebar: React.FC<Props> = (props) => {
           <h6 className='font-bold font-jetBrainsMono'>OrbitGrad</h6>
         </Link>
       </div>
-      <nav aria-label="Main navigation" className='flex-1 space-y-1 mt-10'>
+      <nav aria-label="Main navigation" className='flex-1 space-y-1 mt-16'>
         <ul className='space-y-3'>
           {
             navLinks.map(item => (
