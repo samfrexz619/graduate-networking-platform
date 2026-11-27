@@ -53,6 +53,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
       location,
       linkedinUrl,
       githubUrl,
+      portfolioUrl,
       profilePicture,
       isPublic,
     } = req.body;
@@ -69,6 +70,7 @@ export const createProfile = async (req: AuthRequest, res: Response): Promise<vo
       location,
       linkedinUrl,
       githubUrl,
+      portfolioUrl,
       profilePicture,
       isPublic,
     });
@@ -155,6 +157,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       linkedinUrl,
       githubUrl,
       profilePicture,
+      portfolioUrl,
       isPublic,
     } = req.body;
 
@@ -171,6 +174,7 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         linkedinUrl,
         githubUrl,
         profilePicture,
+        portfolioUrl,
         isPublic,
       }).filter(([_, value]) => value !== undefined)
     );

@@ -29,17 +29,38 @@ const profileSchema = new Schema<IProfile>({
   },
 
   careerGoals: {
-    type: [String],
+    type: [
+      {
+        targetRole: {
+          type: String,
+          trim: true,
+        },
+        description: String,
+        preferredLocations: [String],
+        preferredIndustries: [String],
+      },
+    ],
     default: [],
   },
   education: {
     type: [
       {
-        institution: String,
-        degree: String,
-        fieldOfStudy: String,
+        institution: {
+          type: String,
+          trim: true,
+        },
+        degree: {
+          type: String,
+          trim: true,
+        },
+        fieldOfStudy: {
+          type: String,
+          trim: true,
+        },
         startYear: Number,
         endYear: Number,
+        grade: String,
+        description: String,
       }
     ],
     default: [],
@@ -47,12 +68,27 @@ const profileSchema = new Schema<IProfile>({
   experience: {
     type: [
       {
-        company: String,
-        title: String,
+        company: {
+          type: String,
+          trim: true,
+        },
+        title: {
+          type: String,
+          trim: true,
+        },
         description: String,
         startDate: Date,
         endDate: Date,
-        currentlyWorking: Boolean,
+        currentlyWorking: {
+          type: Boolean,
+          default: false,
+        },
+        employmentType: String,
+        location: String,
+        skills: {
+          type: [String],
+          default: [],
+        },
       }
     ],
     default: [],
@@ -70,6 +106,10 @@ const profileSchema = new Schema<IProfile>({
     trim: true,
   },
   githubUrl: {
+    type: String,
+    trim: true,
+  },
+  portfolioUrl: {
     type: String,
     trim: true,
   },

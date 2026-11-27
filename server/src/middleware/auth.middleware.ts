@@ -23,6 +23,15 @@ export const protect = (req: AuthRequest, res: Response, next: NextFunction): vo
       role: string;
     };
 
+
+    if (!decoded.id || !decoded.role) {
+      res.status(401).json({
+        success: false,
+        message: "Invalid token payload"
+      });
+      return;
+    }
+
     // req.user = {}
 
     req.userId = decoded.id; //jwt creates the userId
