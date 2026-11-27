@@ -4,13 +4,16 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 // import {
 //   ReactQueryDevtools,
 // } from "@tanstack/react-query-devtools";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function QueryProvider({ children }: { children: React.ReactNode }) {
+
+  const router = useRouter();
 
   const [queryClient] = useState(
     () =>
@@ -24,6 +27,17 @@ export default function QueryProvider({ children }: { children: React.ReactNode 
       })
   );
 
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      // Remove cached authenticated data
+      queryClient.clear();
+
+      router.replace("/auth/login?sessionExpired=true");
+    }
+    window.addEventListener("session-expired", handleSessionExpired);
+
+    return () => window.removeEventListener("session-expired", handleSessionExpired)
+  }, [queryClient, router])
   return (
     <QueryClientProvider client={queryClient}>
       {children}
